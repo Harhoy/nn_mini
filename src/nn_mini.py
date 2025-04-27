@@ -73,7 +73,7 @@ class ImageDataLoader:
                     label[int(subfolder)] = 1
                     self._labels.append(label)
 
-                    k += 1
+                    #k += 1
 
         #convert to numpy array
         self._data = np.array(self._data)
@@ -146,7 +146,7 @@ class NeuralNetwork:
     def saveModel(self, name):
         data = {}
         for i in range(len(self._layers)):
-            data[i] = {'type': self._layers[i]._layerType, "weights": {}}
+            data[i] = {'type': self._layers[i]._layerType, 'shape': self._layers[i]._weights.shape, "weights": {}}
 
             for k in range(len(self._layers[i]._weights)):
                 for h in range(len(self._layers[i]._weights[0])):
@@ -161,11 +161,23 @@ class NeuralNetwork:
             data = json.load(json_file)
 
         sortedLayerList = [None] * len(data)
-        for layerName, layerData in data.iteritems():
-            print(layerName)
-            print(layerData['type'])
+        for layerNumber, layerData in data.iteritems():
 
-            
+            input = layerData['shape'][1]
+            output = layerData['shape'][0]
+
+            newLayer = Layer(self, input, output, layerData['type'])
+            newLayer._weights = np.zeros((output,input)) #reset weights
+
+            for i in range(output):
+                for j in range(input):
+                    newLayer._weights[i][j] = layerData['weights'][str(i) + "_" + str(j)]
+
+            sortedLayerList[int(layerNumber)] = newLayer
+
+        for layer in sortedLayerList:
+            self.addLayer(layer)
+
 
 class Layer:
 
@@ -299,6 +311,35 @@ if __name__ == "__main__":
     layer3 = Layer(network, 40, 10, "output")
     network.addLayer(layer3)
 
-    network.train(data, labels, 3)
+    network.train(data, labels, 20, True)
     network.saveModel("mini")
-    network.readModel("mini.json")
+
+    #print(" ")
+    #print(layer1._weights[0][0])
+    #print(layer2._weights[0][0])
+    #print(layer3._weights[0][0])
+
+    network2 = NeuralNetwork()
+    network2.readModel("mini.json")
+    '''
+    print(network._layers[0]._weights)
+    print(network._layers[0]._weights.shape)
+    print(network._layers[0]._layerType)
+
+
+
+    print(network2._layers[0]._weights)
+    print(network2._layers[0]._weights.shape)
+    print(network2._layers[0]._layerType)
+    '''
+
+    #print(" ")
+
+    #print(network2._layers[0]._weights[0][0])
+    #print(network2._layers[1]._weights[0][0])
+    #print(network2._layers[2]._weights[0][0])
+
+
+    #0.35717229
+    #0.63485148
+    #0.18058079
