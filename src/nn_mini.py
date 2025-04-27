@@ -146,14 +146,26 @@ class NeuralNetwork:
     def saveModel(self, name):
         data = {}
         for i in range(len(self._layers)):
-            data[i] = {}
+            data[i] = {'type': self._layers[i]._layerType, "weights": {}}
+
             for k in range(len(self._layers[i]._weights)):
                 for h in range(len(self._layers[i]._weights[0])):
-                    data[i][str(k) + "_" + str(h)] = self._layers[i]._weights[k][h]
+                    data[i]["weights"][str(k) + "_" + str(h)] = self._layers[i]._weights[k][h]
 
         json_obj = json.dumps(data)
         with open(name + ".json", "w") as outfile:
             outfile.write(json_obj)
+
+    def readModel(self, model_file):
+        with open(model_file) as json_file:
+            data = json.load(json_file)
+
+        sortedLayerList = [None] * len(data)
+        for layerName, layerData in data.iteritems():
+            print(layerName)
+            print(layerData['type'])
+
+            
 
 class Layer:
 
@@ -287,5 +299,6 @@ if __name__ == "__main__":
     layer3 = Layer(network, 40, 10, "output")
     network.addLayer(layer3)
 
-    network.train(data, labels, 3, True)
+    network.train(data, labels, 3)
     network.saveModel("mini")
+    network.readModel("mini.json")
