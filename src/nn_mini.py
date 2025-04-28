@@ -2,17 +2,20 @@
 import os
 import json
 import numpy as np
+import random
 import matplotlib.pyplot as plt
 from PIL import Image
 from tqdm import tqdm
+
+np.set_printoptions(precision=2)
 
 ###########################################
 # Different vectorizations and functions
 ###########################################
 
 #loss function where output in a sigmoid (y_pred is return from sigmoid function)
-def loss(y_pred, y):
-    return (y_pred - y) * y_pred * (1 - y_pred)
+def loss_derivative(y_pred, y):
+    return (y_pred - y)
 
 #sigmoid function
 def sigmoid(x):
@@ -21,10 +24,20 @@ def sigmoid(x):
 def brier(y_pred, y):
     return (y_pred - y)**2
 
+def softmax(x):
+    exp_x = np.exp(x)
+    return exp_x / np.sum(exp_x)
+
+def cross_entropy(ypred, y):
+    return np.sum(y * np.log(ypred + 1e-9))
+
+
 #vectorizations
-loss_vectorized = np.vectorize(loss)
+loss_vectorized = np.vectorize(loss_derivative)
 sigmoid_vectorized = np.vectorize(sigmoid)
 brier_vectorized = np.vectorize(brier)
+
+
 
 def convert2numpy(imgFile):
     return np.asarray(Image.open(imgFile))
@@ -46,7 +59,7 @@ def flatten(a):
 
 class ImageDataLoader:
 
-    def __init__(self, folder, items):
+    def __init__(self, folder, items, scale = 1):
 
         #folder where subfolder for each category is placed
         self._folder = folder
@@ -60,14 +73,16 @@ class ImageDataLoader:
         #number of categories to classify
         self._items = items
 
+        self._scale = scale
+
     def readData(self):
         for subfolder in os.listdir(self._folder):
             k = 0
             for file in os.listdir(os.path.join(self._folder, subfolder)):
 
-                if k < 100:
+                if k < 40:
 
-                    x = flatten(convert2numpy(os.path.join(self._folder, subfolder,file)))
+                    x = flatten(convert2numpy(os.path.join(self._folder, subfolder,file))) / self._scale
                     self._data.append(x)
                     label = [0] * self._items
                     label[int(subfolder)] = 1
@@ -79,6 +94,11 @@ class ImageDataLoader:
         self._data = np.array(self._data)
         self._labels = np.array(self._labels)
 
+        #shuffle
+        data = list(zip(self._data, self._labels))
+        random.shuffle(data)
+
+        self._data, self._labels = zip(*data)
 
         return self._data, self._labels
 
@@ -90,7 +110,7 @@ class NeuralNetwork:
         self._layers = []
 
         #learning rate used in backprop
-        self._learning_rate = 1
+        self._learning_rate = .01
 
     def addLayer(self, layer):
         self._layers.append(layer)
@@ -102,7 +122,7 @@ class NeuralNetwork:
             for k in range(len(x)):
                 z = self.feedforward(x[k])
                 self.backprop(x[k], y[k])
-                self._accurayIterations[iter] += np.sum(brier_vectorized(z, y[k]))
+                self._accurayIterations[iter] += np.sum(cross_entropy(z, y[k]))
 
             self._accurayIterations[iter] /= len(x)
 
@@ -178,6 +198,9 @@ class NeuralNetwork:
         for layer in sortedLayerList:
             self.addLayer(layer)
 
+    def predict(self, x):
+        return np.round(self.feedforward(x),2)
+
 
 class Layer:
 
@@ -191,7 +214,7 @@ class Layer:
 
         #weights
         #self._weights = np.ones((outputs, inputs))
-        self._weights = np.random.random((outputs, inputs))
+        self._weights = (-1 + 2 * np.random.random((outputs, inputs)))
 
         #biases
         self._biases = np.ones(outputs)
@@ -212,7 +235,10 @@ class Layer:
         self._a = np.matmul(self._weights, x)
 
         #activation function
-        self._z = sigmoid_vectorized(self._a)
+        if self._layerType == "hidden":
+            self._z = sigmoid_vectorized(self._a)
+        else:
+            self._z = softmax(self._a)
 
         return self._z
 
@@ -237,8 +263,13 @@ class Layer:
             #updating with inputs from previous layer
             updates = - self._network._learning_rate * np.outer(self._deltas, z)
 
+
+
+        #print(sum(self._deltas))
+
         #final updates on weights
         self._weights = np.add(self._weights, updates)
+
 
 
 if __name__ == "__main__":
@@ -298,48 +329,32 @@ if __name__ == "__main__":
 
     print("... reading data ...")
 
-    imgLoader = ImageDataLoader("../../data/Reduced MNIST Data/Reduced Trainging data", 10)
+    imgLoader = ImageDataLoader("../../data/Reduced MNIST Data/Reduced Trainging data", 10, 255)
     data, labels = imgLoader.readData()
 
     print("... training model ...")
 
     network = NeuralNetwork()
-    layer1 = Layer(network, 784, 40, "hidden")
+    layer1 = Layer(network, 784, 50, "hidden")
     network.addLayer(layer1)
-    layer2 = Layer(network, 40, 40, "hidden")
+    layer2 = Layer(network, 50, 50, "hidden")
     network.addLayer(layer2)
-    layer3 = Layer(network, 40, 10, "output")
+    layer3 = Layer(network, 50, 10, "output")
     network.addLayer(layer3)
 
     network.train(data, labels, 20, True)
     network.saveModel("mini")
 
-    #print(" ")
-    #print(layer1._weights[0][0])
-    #print(layer2._weights[0][0])
-    #print(layer3._weights[0][0])
-
     network2 = NeuralNetwork()
     network2.readModel("mini.json")
-    '''
-    print(network._layers[0]._weights)
-    print(network._layers[0]._weights.shape)
-    print(network._layers[0]._layerType)
 
 
-
-    print(network2._layers[0]._weights)
-    print(network2._layers[0]._weights.shape)
-    print(network2._layers[0]._layerType)
-    '''
-
-    #print(" ")
-
-    #print(network2._layers[0]._weights[0][0])
-    #print(network2._layers[1]._weights[0][0])
-    #print(network2._layers[2]._weights[0][0])
-
-
-    #0.35717229
-    #0.63485148
-    #0.18058079
+    print("1",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/1/936.jpg"))/ 255.0)* 100)
+    print("7",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/7/829.jpg"))/ 255.0) * 100)
+    print("5",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/5/787.jpg"))/ 255.0) * 100)
+    print("7",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/7/830.jpg"))/ 255.0) * 100)
+    print("2",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/2/833.jpg"))/ 255.0) * 100)
+    print("6",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/6/759.jpg"))/ 255.0) * 100)
+    print("6",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/6/760.jpg"))/ 255.0) * 100)
+    print("8",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/8/775.jpg"))/ 255.0) * 100)
+    print("9",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/9/810.jpg"))/ 255.0) * 100)
