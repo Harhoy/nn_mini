@@ -21,7 +21,7 @@ Separating the classes into different files should also be done ...
 
 # Validation
 
-The model is validated by running ten epochs on the MNIST data set with a learning rate of 0.01. I trained it on MacBook Air from 2017 on an Intel 1.8 GHz I5 processor and it took about a minute.
+The model is validated by running ten epochs on the MNIST data set with a learning rate of 0.01. I trained it on MacBook Air from 2017 on an Intel 1.8 GHz I5 processor and it took about a minute to complete.
 
 The model's global accuracy score is
 
@@ -29,46 +29,47 @@ The confusion matrix, recall and precision vectors are given below:
 
 
 ```python
-Confusion matrix
-      0     1    2     3     4    5    6     7    8    9
-0  33.0   0.0  1.0   0.0   5.0  1.0  0.0   0.0  0.0  0.0
-1   1.0  19.0  0.0   4.0   9.0  1.0  0.0   1.0  1.0  4.0
-2   3.0   0.0  8.0   4.0  17.0  0.0  1.0   2.0  4.0  1.0
-3   0.0   1.0  0.0  26.0   6.0  1.0  0.0   2.0  1.0  3.0
-4   0.0   0.0  1.0   3.0  34.0  0.0  0.0   1.0  0.0  1.0
-5   5.0   1.0  0.0  13.0   4.0  8.0  0.0   3.0  3.0  3.0
-6   4.0   0.0  2.0   3.0  18.0  0.0  8.0   1.0  1.0  3.0
-7   0.0   0.0  0.0   0.0   8.0  0.0  0.0  21.0  3.0  8.0
-8   5.0   1.0  2.0  10.0   8.0  2.0  1.0   3.0  6.0  2.0
-9   0.0   1.0  0.0   7.0  13.0  0.0  0.0   6.0  4.0  9.0
+Confusion matrix (raw counts)
+0      1      2      3      4      5      6      7      8      9
+0  960.0    0.0    3.0    8.0    3.0   10.0    6.0    0.0    7.0    3.0
+1    0.0  986.0    7.0    0.0    0.0    2.0    2.0    1.0    1.0    1.0
+2    4.0   15.0  909.0   22.0    8.0    2.0   16.0    6.0   15.0    3.0
+3    3.0    3.0    9.0  942.0    1.0   11.0    1.0    4.0   19.0    7.0
+4    0.0    7.0    0.0    0.0  949.0    0.0    9.0    2.0    2.0   31.0
+5   14.0   11.0    1.0   63.0    7.0  822.0   24.0    4.0   46.0    8.0
+6    2.0    5.0    5.0    0.0    6.0    6.0  975.0    0.0    0.0    1.0
+7    0.0    7.0    6.0    8.0    9.0    0.0    0.0  935.0    6.0   29.0
+8    1.0   26.0   15.0   49.0    4.0   17.0    6.0    3.0  866.0   13.0
+9    3.0    2.0    4.0   13.0   58.0    6.0    2.0   36.0   13.0  863.0
+
 ```
 
 ```python
-Precison
-0  0.647059
-1  0.826087
-2  0.571429
-3  0.371429
-4  0.278689
-5  0.615385
-6  0.800000
-7  0.525000
-8  0.260870
-9  0.264706
+Precison (fractions)
+0  0.972644
+1  0.928437
+2  0.947862
+3  0.852489
+4  0.908134
+5  0.938356
+6  0.936599
+7  0.943491
+8  0.888205
+9  0.899896
 ```
 
 ```python
-Recall
-0  0.825
-1  0.475
-2  0.200
-3  0.650
-4  0.850
-5  0.200
-6  0.200
-7  0.525
-8  0.150
-9  0.225
+Recall (fractions)
+0  0.960
+1  0.986
+2  0.909
+3  0.942
+4  0.949
+5  0.822
+6  0.975
+7  0.935
+8  0.866
+9  0.863
 ```
 
 # Basic use
