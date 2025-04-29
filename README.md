@@ -30,7 +30,7 @@ The confusion matrix, recall and precision vectors are given below:
 
 ```python
 Confusion matrix (raw counts)
-0      1      2      3      4      5      6      7      8      9
+       0      1      2      3      4      5      6      7      8      9
 0  960.0    0.0    3.0    8.0    3.0   10.0    6.0    0.0    7.0    3.0
 1    0.0  986.0    7.0    0.0    0.0    2.0    2.0    1.0    1.0    1.0
 2    4.0   15.0  909.0   22.0    8.0    2.0   16.0    6.0   15.0    3.0
