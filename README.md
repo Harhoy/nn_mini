@@ -1,8 +1,18 @@
 
 
+#Installation
+
+Run pip install -r requirements.txt
+Preferably in a [virtual environment](https://docs.python.org/3/library/venv.html)
+
+#Basic use
+
+Below is an example of how to train and use the network for predictions, including saving and loading models.
+The data is just a reduced version of the MNIST dataset from [Kaggle](https://www.kaggle.com/datasets/mohamedgamal07/reduced-mnist).
+
 ```python
 
-#------------------------------------
+  #------------------------------------
   # Data import
   #------------------------------------
 
