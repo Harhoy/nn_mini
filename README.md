@@ -7,7 +7,7 @@ Preferably in a [virtual environment](https://docs.python.org/3/library/venv.htm
 
 # What it does
 
-The network is meant as a learning tool and has some limitations (in its current state):
+The network is meant as a learning tool and is implemented using no other computational tools than numpy. However, it has some limitations (in its current state):
 
 * No batch learning (updates are done after each item)
 * Sigmoid activation at hidden neurons only
@@ -16,7 +16,8 @@ The network is meant as a learning tool and has some limitations (in its current
 * The model is trained using backpropagation
 * There are no biases
 
-The program structure should be easily amenable to remedy these limitations if time allows in the future...
+The program structure should be easily amenable to remedy these limitations if time allows in the future ...
+Separating the classes into different files should also be done ...
 
 # Basic use
 
@@ -41,7 +42,7 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
   # Model definition
   #------------------------------------
 
-  #The model reads flattened 28x28 pixels in a 784-length vector
+  #The model reads a flattened 28x28 pixels in a 784-length vector
   #There are two hidden layers with 50 nodes and one output layer with ten nodes (0-9)
 
   #Network object
