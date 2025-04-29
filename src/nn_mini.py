@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from tqdm import tqdm
 
+#Making the output human readable
 np.set_printoptions(precision=2)
 
 ###########################################
@@ -21,9 +22,11 @@ def loss_derivative(y_pred, y):
 def sigmoid(x):
     return 1.0 / (1.0 + 2.71 ** (-x))
 
+#brier score
 def brier(y_pred, y):
     return (y_pred - y)**2
 
+#softmax
 def softmax(x):
     exp_x = np.exp(x)
     return exp_x / np.sum(exp_x)
@@ -31,13 +34,41 @@ def softmax(x):
 def cross_entropy(ypred, y):
     return np.sum(y * np.log(ypred + 1e-9))
 
+def maxList(x):
+    maxVal = -1
+    index = None
+    k = 0
+    for v in x:
+        if v > maxVal:
+            maxVal = v
+            index = k
+        k+=1
+    return index
+
+
+def mat2markdown(m):
+
+    s = "| Actual | Predicted |" + "\n" + "| --- | --- | \n"
+
+    for k in range(len(m)):
+        s += str(k) + "|"
+    s+= "\n"
+
+    for k in range(len(m)):
+        s += str(k) + "|"
+        for h in range(len(m)):
+            s += str(m[k][h]) + "|"
+        s+= "\n"
+
+    return s
+
+
+
 
 #vectorizations
 loss_vectorized = np.vectorize(loss_derivative)
 sigmoid_vectorized = np.vectorize(sigmoid)
 brier_vectorized = np.vectorize(brier)
-
-
 
 def convert2numpy(imgFile):
     return np.asarray(Image.open(imgFile))
@@ -88,7 +119,7 @@ class ImageDataLoader:
                     label[int(subfolder)] = 1
                     self._labels.append(label)
 
-                    #k += 1
+                    k += 1
 
         #convert to numpy array
         self._data = np.array(self._data)
@@ -117,12 +148,22 @@ class NeuralNetwork:
 
     def train(self, x, y, iterations, figure = False):
 
+        #Overall value of loss function
         self._accurayIterations = [0] * iterations
+
         for iter in tqdm(range(iterations)) :
             for k in range(len(x)):
+
+                #Feeding forward values in the network (for one single item)
                 z = self.feedforward(x[k])
+
+                #backpropagation through network
                 self.backprop(x[k], y[k])
+
+                #recording loss
                 self._accurayIterations[iter] += np.sum(cross_entropy(z, y[k]))
+
+
 
             self._accurayIterations[iter] /= len(x)
 
@@ -201,6 +242,38 @@ class NeuralNetwork:
     def predict(self, x):
         return np.round(self.feedforward(x),2)
 
+    def evaluate(self, x, y):
+
+        #Confusion matrix
+        classNum = len(y[0]) #number of classes
+        self._confusionMatrix = np.zeros((classNum, classNum))
+
+        for k in range(len(x)):
+
+            #Feeding forward values in the network (for one single item)
+            z = self.feedforward(x[k])
+
+            self._confusionMatrix[y[k].tolist().index(1)][maxList(z.tolist())] += 1
+
+        #Accuracy
+        accuracy = np.trace(self._confusionMatrix) / sum(sum(self._confusionMatrix))
+
+        #Precison
+        precision = np.trace(self._confusionMatrix) / np.sum(self._confusionMatrix, axis = 0)
+
+        #Recall
+        recall = np.trace(self._confusionMatrix) / np.sum(self._confusionMatrix, axis = 1)
+
+        return self._confusionMatrix, accuracy, precision, recall
+
+
+
+
+
+
+
+
+
 
 class Layer:
 
@@ -263,10 +336,6 @@ class Layer:
             #updating with inputs from previous layer
             updates = - self._network._learning_rate * np.outer(self._deltas, z)
 
-
-
-        #print(sum(self._deltas))
-
         #final updates on weights
         self._weights = np.add(self._weights, updates)
 
@@ -309,19 +378,26 @@ if __name__ == "__main__":
     network.addLayer(layer3)
 
 
-    #------------------------------------
-    # Training and saving model
-    #------------------------------------
+    #---------------------------------------
+    # Training, evaluating and saving model
+    #---------------------------------------
 
     print("... training model ...")
 
     #The model is trained on data and labels from the loader
     #There is no batch training, and there are five epochs.
     #The last argument "True" indicates that a plot of the loss function is given at the end.
-    network.train(data, labels, 5, True)
+    network.train(data, labels, 1)
 
     #The model is saved in a file called "mini" (.json file)
     network.saveModel("mini")
+
+
+    print(network.evaluate(data, labels))
+
+    cf, ac, pr, rec = network.evaluate(data, labels)
+
+    print(mat2markdown(cf))
 
 
     #------------------------------------
