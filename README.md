@@ -105,7 +105,6 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
 
 ```
 
-| Actual | Predicted |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |0|1|2|3|4|5|6|7|8|9|
 |0|4.0|2.0|0.0|5.0|0.0|20.0|3.0|1.0|2.0|3.0|
