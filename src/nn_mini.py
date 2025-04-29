@@ -2,6 +2,7 @@
 import os
 import json
 import numpy as np
+import pandas as pd
 import random
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -246,7 +247,7 @@ class NeuralNetwork:
     def predict(self, x):
         return np.round(self.feedforward(x),2)
 
-    def evaluate(self, x, y):
+    def evaluate(self, x, y, report = False):
 
         #Confusion matrix
         classNum = len(y[0]) #number of classes
@@ -263,12 +264,30 @@ class NeuralNetwork:
         accuracy = np.trace(self._confusionMatrix) / sum(sum(self._confusionMatrix))
 
         #Precison
-        precision = np.trace(self._confusionMatrix) / np.sum(self._confusionMatrix, axis = 0)
+        precision = np.diagonal(self._confusionMatrix) / np.sum(self._confusionMatrix, axis = 0)
 
         #Recall
-        recall = np.trace(self._confusionMatrix) / np.sum(self._confusionMatrix, axis = 1)
+        recall = np.diagonal(self._confusionMatrix) / np.sum(self._confusionMatrix, axis = 1)
 
-        return self._confusionMatrix, accuracy, precision, recall
+        if report:
+            print("The model's score is as follows: \n")
+            print("Global accuracy is:", accuracy)
+
+            print("Confusion matrix")
+            print(pd.DataFrame(self._confusionMatrix))
+            print("\n")
+
+            print("Precison")
+            print(pd.DataFrame(precision))
+            print("\n")
+
+            print("Recall")
+            print(pd.DataFrame(recall))
+            print("\n")
+
+
+
+        return pd.DataFrame(self._confusionMatrix), accuracy, pd.DataFrame(precision), pd.DataFrame(recall)
 
 
 
@@ -391,17 +410,17 @@ if __name__ == "__main__":
     #The model is trained on data and labels from the loader
     #There is no batch training, and there are five epochs.
     #The last argument "True" indicates that a plot of the loss function is given at the end.
-    network.train(data, labels, 1)
+    network.train(data, labels, 5)
 
     #The model is saved in a file called "mini" (.json file)
     network.saveModel("mini")
 
 
-    print(network.evaluate(data, labels))
+    network.evaluate(data, labels, True)
 
     cf, ac, pr, rec = network.evaluate(data, labels)
 
-    print(mat2markdown(cf))
+    #print(mat2markdown(cf))
 
 
     #------------------------------------
