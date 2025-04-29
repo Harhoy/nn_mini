@@ -23,9 +23,9 @@ Separating the classes into different files should also be done ...
 
 The model is validated by running ten epochs on the MNIST data set with a learning rate of 0.01. I trained it on MacBook Air from 2017 on an Intel 1.8 GHz I5 processor and it took about a minute to complete.
 
-The model's global accuracy score is
+The model's global accuracy score is 92.7 %.
 
-The confusion matrix, recall and precision vectors are given below:
+The confusion matrix, recall and precision vectors are given below. Most values are above 90 % and all are greater than 80 %.
 
 
 ```python
