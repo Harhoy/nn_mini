@@ -104,7 +104,7 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
 
 
 ```
-
+```python
 Confusion matrix
       0     1    2     3     4    5    6     7    8    9
 0  33.0   0.0  1.0   0.0   5.0  1.0  0.0   0.0  0.0  0.0
@@ -117,3 +117,4 @@ Confusion matrix
 7   0.0   0.0  0.0   0.0   8.0  0.0  0.0  21.0  3.0  8.0
 8   5.0   1.0  2.0  10.0   8.0  2.0  1.0   3.0  6.0  2.0
 9   0.0   1.0  0.0   7.0  13.0  0.0  0.0   6.0  4.0  9.0
+```
