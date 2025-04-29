@@ -48,14 +48,18 @@ def maxList(x):
 
 def mat2markdown(m):
 
-    s = "| Actual | Predicted |" + "\n" + "| --- | --- | \n"
+    s = "| Actual | Predicted |" + "\n"
 
     for k in range(len(m)):
-        s += str(k) + "|"
+        s += "| --- "
+    s+= "| \n"
+
+    for k in range(len(m)):
+        s +="|" + str(k) + "|"
     s+= "\n"
 
     for k in range(len(m)):
-        s += str(k) + "|"
+        s += "|" + str(k) + "|"
         for h in range(len(m)):
             s += str(m[k][h]) + "|"
         s+= "\n"
