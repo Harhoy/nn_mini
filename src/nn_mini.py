@@ -55,8 +55,8 @@ def mat2markdown(m):
     s+= "| \n"
 
     for k in range(len(m)):
-        s +="|" + str(k) + "|"
-    s+= "\n"
+        s +="|" + str(k)
+    s+= "| \n"
 
     for k in range(len(m)):
         s += "|" + str(k) + "|"
