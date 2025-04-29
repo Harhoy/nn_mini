@@ -21,7 +21,11 @@ Separating the classes into different files should also be done ...
 
 # Validation
 
-The model is valited by
+The model is validated by running ten epochs on the MNIST data set with a learning rate of 0.01. I trained it on MacBook Air from 2017 on an Intel 1.8 GHz I5 processor and it took about a minute.
+
+The model's global accuracy score is
+
+The confusion matrix, recall and precision vectors are given below:
 
 
 ```python

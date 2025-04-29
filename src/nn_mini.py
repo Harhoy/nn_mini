@@ -124,7 +124,7 @@ class ImageDataLoader:
                     label[int(subfolder)] = 1
                     self._labels.append(label)
 
-                    k += 1
+                    #k += 1
 
         #convert to numpy array
         self._data = np.array(self._data)
@@ -410,7 +410,7 @@ if __name__ == "__main__":
     #The model is trained on data and labels from the loader
     #There is no batch training, and there are five epochs.
     #The last argument "True" indicates that a plot of the loss function is given at the end.
-    network.train(data, labels, 5)
+    network.train(data, labels, 10)
 
     #The model is saved in a file called "mini" (.json file)
     network.saveModel("mini")
