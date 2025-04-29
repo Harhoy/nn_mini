@@ -274,82 +274,71 @@ class Layer:
 
 if __name__ == "__main__":
 
-
-    '''
-
-    nn = NeuralNetwork()
-
-    l1 = Layer(nn, 3, 3, "hidden")
-    l2 = Layer(nn, 3, 3, "output")
-
-    data = np.array([[1,1,1],[2,2,2]])
-    answer = np.array([[0,1,0],[1,0,0]])
-
-    #data = np.array([[1,1,1]])
-    #answer = np.array([[0,1]])
-
-
-    #data = np.array([1,1,1])
-    #answer = np.array([0,1])
-
-
-    nn.addLayer(l1)
-    nn.addLayer(l2)
-
-    #print(nn.feedforward(data))
-
-    nn.train(data, answer, 1)
-
-    r = convert2numpy("../../data/Reduced MNIST Data/Reduced Trainging data/0/4924.jpg")
-
-    print(r.shape)
-
-    imgLoader = ImageDataLoader("../../data/Reduced MNIST Data/Reduced Trainging data", 10)
-
-
-    l1.feedforward(data)
-    l2.feedforward(l1._z)
-
-    l2.backprop(l1._z, answer)
-    l1.backprop(data, answer, l2)
-
-
-    for i in range(1000):
-
-        l1.feedforward(data)
-        l2.feedforward(l1._z)
-
-        l2.backprop(l1._z, answer)
-        l1.backprop(data, answer, l2)
-
-    print(l2._z)
-    '''
-
-    #answer from manual code: [0.53407277 0.94834531]
+    #------------------------------------
+    # Data import
+    #------------------------------------
 
     print("... reading data ...")
 
+    #Creating an image loader from MNIST dataset
     imgLoader = ImageDataLoader("../../data/Reduced MNIST Data/Reduced Trainging data", 10, 255)
+
+    #Fetching data
     data, labels = imgLoader.readData()
 
-    print("... training model ...")
+    #------------------------------------
+    # Model definition
+    #------------------------------------
 
+    #The model reads flattened 28x28 pixels in a 784-length vector
+    #There is two hidden layers with 50 nodes and one output layer with ten nodes (0-9)
+
+    #Network object
     network = NeuralNetwork()
+
+    #Defining and adding layer
     layer1 = Layer(network, 784, 50, "hidden")
     network.addLayer(layer1)
+
+    #Defining and adding layer
     layer2 = Layer(network, 50, 50, "hidden")
     network.addLayer(layer2)
+
+    #Defining and adding layer
     layer3 = Layer(network, 50, 10, "output")
     network.addLayer(layer3)
 
-    network.train(data, labels, 20, True)
+
+    #------------------------------------
+    # Training and saving model
+    #------------------------------------
+
+    print("... training model ...")
+
+    #The model is trained on data and labels from the loader
+    #There is no batch training, and there are five epochs.
+    #The last argument "True" indicates that a plot of the loss function is given at the end.
+    network.train(data, labels, 5, True)
+
+    #The model is saved in a file called "mini" (.json file)
     network.saveModel("mini")
+
+
+    #------------------------------------
+    # Reading in trained model
+    #------------------------------------
 
     network2 = NeuralNetwork()
     network2.readModel("mini.json")
 
-
+    #Comparing outputs from two networks
     print("1",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/1/936.jpg"))/ 255.0)* 100)
+    print("1",network2.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/1/936.jpg"))/ 255.0)* 100)
+
+    print("9",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/9/810.jpg"))/ 255.0) * 100)
+    print("9",network2.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/9/810.jpg"))/ 255.0) * 100)
+
+    #Testing on trained network
     print("7",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/7/829.jpg"))/ 255.0) * 100)
     print("5",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/5/787.jpg"))/ 255.0) * 100)
     print("7",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/7/830.jpg"))/ 255.0) * 100)
@@ -357,4 +346,3 @@ if __name__ == "__main__":
     print("6",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/6/759.jpg"))/ 255.0) * 100)
     print("6",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/6/760.jpg"))/ 255.0) * 100)
     print("8",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/8/775.jpg"))/ 255.0) * 100)
-    print("9",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/9/810.jpg"))/ 255.0) * 100)
