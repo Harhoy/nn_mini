@@ -2,7 +2,7 @@
 
 # Installation
 
-Run pip install -r requirements.txt
+Run pip install -r requirements.txt.
 Preferably in a [virtual environment](https://docs.python.org/3/library/venv.html)
 
 # Basic use
@@ -18,7 +18,7 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
 
   print("... reading data ...")
 
-  #Creating an image loader from MNIST dataset
+  #Creating an image loader from MNIST dataset. 10 classes, scaling factor of 255.
   imgLoader = ImageDataLoader("../../data/Reduced MNIST Data/Reduced Trainging data", 10, 255)
 
   #Fetching data
@@ -29,20 +29,20 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
   #------------------------------------
 
   #The model reads flattened 28x28 pixels in a 784-length vector
-  #There is two hidden layers with 50 nodes and one output layer with ten nodes (0-9)
+  #There are two hidden layers with 50 nodes and one output layer with ten nodes (0-9)
 
   #Network object
   network = NeuralNetwork()
 
-  #Defining and adding layer
+  #Defining and adding layer (784 inputs, 50 output neurons)
   layer1 = Layer(network, 784, 50, "hidden")
   network.addLayer(layer1)
 
-  #Defining and adding layer
+  #Defining and adding layer (50 input neurons, 50 output neurons)
   layer2 = Layer(network, 50, 50, "hidden")
   network.addLayer(layer2)
 
-  #Defining and adding layer
+  #Defining and adding layer (50 input neurons, 10 output classes)
   layer3 = Layer(network, 50, 10, "output")
   network.addLayer(layer3)
 
@@ -54,7 +54,7 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
   print("... training model ...")
 
   #The model is trained on data and labels from the loader
-  #There is no batch training, and there are five epochs.
+  #There is no batch training, and there are five epochs
   #The last argument "True" indicates that a plot of the loss function is given at the end.
   network.train(data, labels, 5, True)
 
@@ -63,10 +63,13 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
 
 
   #------------------------------------
-  # Reading in trained model
+  # Loading a trained model
   #------------------------------------
 
+  #Define a new network object
   network2 = NeuralNetwork()
+
+  #Read the corresponding model file
   network2.readModel("mini.json")
 
   #Comparing outputs from two networks
