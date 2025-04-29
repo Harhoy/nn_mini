@@ -5,6 +5,17 @@
 Run pip install -r requirements.txt.
 Preferably in a [virtual environment](https://docs.python.org/3/library/venv.html)
 
+# What it does
+
+The network is meant as a learning tool and has some limitations (in its current state):
+
+* No batch learning (updates are done after each item)
+* Sigmoid activation at hidden neurons only
+* Softmax at output layer only
+* Cross entropy loss only
+* The model is trained using backpropagation
+* There are no biases
+
 # Basic use
 
 Below is an example of how to train and use the network for predictions, including saving and loading models.
