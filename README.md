@@ -16,6 +16,8 @@ The network is meant as a learning tool and has some limitations (in its current
 * The model is trained using backpropagation
 * There are no biases
 
+The program structure should be easily amenable to remedy these limitations if time allows in the future...
+
 # Basic use
 
 Below is an example of how to train and use the network for predictions, including saving and loading models.
