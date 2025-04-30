@@ -378,6 +378,13 @@ if __name__ == "__main__":
     #Fetching data
     data, labels = imgLoader.readData()
 
+
+    #Creating an image loader from MNIST dataset
+    imgLoaderTest = ImageDataLoader("../../data/Reduced MNIST Data/Reduced Testing data", 10, 255)
+
+    #Fetching data
+    data_test, labels_test = imgLoaderTest.readData()
+
     #------------------------------------
     # Model definition
     #------------------------------------
@@ -416,7 +423,7 @@ if __name__ == "__main__":
     network.saveModel("mini")
 
 
-    network.evaluate(data, labels, True)
+    network.evaluate(data_test, labels_test, True)
 
     cf, ac, pr, rec = network.evaluate(data, labels)
 

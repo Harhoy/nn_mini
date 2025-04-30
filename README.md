@@ -23,7 +23,7 @@ Separating the classes into different files should also be done ...
 
 The model is validated by running ten epochs on the MNIST data set with a learning rate of 0.01. I trained it on MacBook Air from 2017 on an Intel 1.8 GHz I5 processor and it took about a minute to complete.
 
-The model's global accuracy score is 92.7 %.
+The model's global accuracy score is 84.7 % on the test dataset.
 
 The confusion matrix, recall and precision vectors are given below. Most values are above 90 % and all are greater than 80 %.
 
@@ -31,45 +31,45 @@ The confusion matrix, recall and precision vectors are given below. Most values 
 ```python
 Confusion matrix (raw counts)
        0      1      2      3      4      5      6      7      8      9
-0  960.0    0.0    3.0    8.0    3.0   10.0    6.0    0.0    7.0    3.0
-1    0.0  986.0    7.0    0.0    0.0    2.0    2.0    1.0    1.0    1.0
-2    4.0   15.0  909.0   22.0    8.0    2.0   16.0    6.0   15.0    3.0
-3    3.0    3.0    9.0  942.0    1.0   11.0    1.0    4.0   19.0    7.0
-4    0.0    7.0    0.0    0.0  949.0    0.0    9.0    2.0    2.0   31.0
-5   14.0   11.0    1.0   63.0    7.0  822.0   24.0    4.0   46.0    8.0
-6    2.0    5.0    5.0    0.0    6.0    6.0  975.0    0.0    0.0    1.0
-7    0.0    7.0    6.0    8.0    9.0    0.0    0.0  935.0    6.0   29.0
-8    1.0   26.0   15.0   49.0    4.0   17.0    6.0    3.0  866.0   13.0
-9    3.0    2.0    4.0   13.0   58.0    6.0    2.0   36.0   13.0  863.0
+0  186.0    0.0    0.0    1.0    0.0   12.0    1.0    0.0    0.0    0.0
+1    0.0  187.0    3.0    1.0    0.0    0.0    0.0    2.0    7.0    0.0
+2    5.0    2.0  159.0    5.0    2.0    1.0    8.0    5.0   12.0    1.0
+3    0.0    0.0    5.0  166.0    0.0   10.0    0.0    2.0   17.0    0.0
+4    1.0    1.0    0.0    1.0  165.0    4.0    8.0    4.0    2.0   14.0
+5    4.0    3.0    1.0   14.0    4.0  153.0   11.0    1.0    8.0    1.0
+6    4.0    0.0    1.0    1.0    0.0    3.0  191.0    0.0    0.0    0.0
+7    0.0    1.0    6.0    0.0    1.0    1.0    0.0  187.0    0.0    4.0
+8    4.0    5.0    3.0    4.0    6.0   18.0    3.0    3.0  146.0    8.0
+9    1.0    0.0    0.0    0.0   16.0    4.0    1.0   18.0    6.0  154.0
 
 ```
 
 ```python
 Precison (fractions)
-0  0.972644
-1  0.928437
-2  0.947862
-3  0.852489
-4  0.908134
-5  0.938356
-6  0.936599
-7  0.943491
-8  0.888205
-9  0.899896
+0  0.907317
+1  0.939698
+2  0.893258
+3  0.860104
+4  0.850515
+5  0.742718
+6  0.856502
+7  0.842342
+8  0.737374
+9  0.846154
 ```
 
 ```python
 Recall (fractions)
-0  0.960
-1  0.986
-2  0.909
-3  0.942
-4  0.949
-5  0.822
-6  0.975
+0  0.930
+1  0.935
+2  0.795
+3  0.830
+4  0.825
+5  0.765
+6  0.955
 7  0.935
-8  0.866
-9  0.863
+8  0.730
+9  0.770
 ```
 
 # Basic use
@@ -90,6 +90,12 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
 
   #Fetching data
   data, labels = imgLoader.readData()
+
+  #Creating an image loader from MNIST dataset (test data)
+  imgLoaderTest = ImageDataLoader("../../data/Reduced MNIST Data/Reduced Testing data", 10, 255)
+
+  #Fetching data
+  data_test, labels_test = imgLoaderTest.readData()
 
   #------------------------------------
   # Model definition
@@ -123,11 +129,10 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
   #The model is trained on data and labels from the loader
   #There is no batch training, and there are five epochs
   #The last argument "True" indicates that a plot of the loss function is given at the end.
-  network.train(data, labels, 5, True)
+  network.train(data_test, labels_test, 5, True)
 
   #The model is saved in a file called "mini" (.json file)
   network.saveModel("mini")
-
 
   #------------------------------------
   # Loading a trained model
