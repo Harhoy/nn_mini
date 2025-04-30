@@ -213,10 +213,8 @@ class NeuralNetwork:
         data = {}
         for i in range(len(self._layers)):
             data[i] = {'type': self._layers[i]._layerType, 'shape': self._layers[i]._weights.shape, "weights": {}}
-
-            for k in range(len(self._layers[i]._weights)):
-                for h in range(len(self._layers[i]._weights[0])):
-                    data[i]["weights"][str(k) + "_" + str(h)] = self._layers[i]._weights[k][h]
+            data[i]["weights"] = "w_name_" + str(i)
+            np.save("w_name_" + str(i), self._layers[i]._weights)
 
         json_obj = json.dumps(data)
         with open(name + ".json", "w") as outfile:
@@ -233,11 +231,7 @@ class NeuralNetwork:
             output = layerData['shape'][0]
 
             newLayer = Layer(self, input, output, layerData['type'])
-            newLayer._weights = np.zeros((output,input)) #reset weights
-
-            for i in range(output):
-                for j in range(input):
-                    newLayer._weights[i][j] = layerData['weights'][str(i) + "_" + str(j)]
+            newLayer._weights = np.load(layerData["weights"] + ".npy") #reset weights
 
             sortedLayerList[int(layerNumber)] = newLayer
 
@@ -270,6 +264,7 @@ class NeuralNetwork:
         recall = np.diagonal(self._confusionMatrix) / np.sum(self._confusionMatrix, axis = 1)
 
         if report:
+
             print("The model's score is as follows: \n")
             print("Global accuracy is:", accuracy)
 
@@ -288,15 +283,6 @@ class NeuralNetwork:
 
 
         return pd.DataFrame(self._confusionMatrix), accuracy, pd.DataFrame(precision), pd.DataFrame(recall)
-
-
-
-
-
-
-
-
-
 
 class Layer:
 
@@ -417,7 +403,7 @@ if __name__ == "__main__":
     #The model is trained on data and labels from the loader
     #There is no batch training, and there are five epochs.
     #The last argument "True" indicates that a plot of the loss function is given at the end.
-    network.train(data, labels, 10)
+    network.train(data, labels, 1)
 
     #The model is saved in a file called "mini" (.json file)
     network.saveModel("mini")
