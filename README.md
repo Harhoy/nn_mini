@@ -25,7 +25,7 @@ The model is validated by running ten epochs on the MNIST data set with a learni
 
 The model's global accuracy score is 84.7 % on the test dataset.
 
-The confusion matrix, recall and precision vectors are given below. Most values are above 90 % and all are greater than 80 %.
+The confusion matrix, recall and precision vectors are given below. 
 
 
 ```python
