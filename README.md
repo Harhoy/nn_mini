@@ -25,7 +25,7 @@ The model is validated by running ten epochs on the MNIST data set with a learni
 
 The model's global accuracy score is 84.7 % on the test dataset.
 
-The confusion matrix, recall and precision vectors are given below. 
+The confusion matrix, recall and precision vectors are given below.
 
 
 ```python
@@ -131,7 +131,7 @@ The data is just a reduced version of the MNIST dataset from [Kaggle](https://ww
   #The last argument "True" indicates that a plot of the loss function is given at the end.
   network.train(data_test, labels_test, 5, True)
 
-  #The model is saved in a file called "mini" (.json file)
+  #The model is saved in a file called "mini" (.npy)
   network.saveModel("mini")
 
   #------------------------------------
