@@ -30,7 +30,7 @@ def brier(y_pred, y):
 #softmax
 def softmax(x):
     exp_x = np.exp(x)
-    return exp_x / np.sum(exp_x)
+    return exp_x / np.sum(exp_x + 1e-9)
 
 def cross_entropy(ypred, y):
     return np.sum(y * np.log(ypred + 1e-9))
@@ -45,29 +45,6 @@ def maxList(x):
             index = k
         k+=1
     return index
-
-
-def mat2markdown(m):
-
-    s = "| Actual | Predicted |" + "\n"
-
-    for k in range(len(m)):
-        s += "| --- "
-    s+= "| \n"
-
-    for k in range(len(m)):
-        s +="|" + str(k)
-    s+= "| \n"
-
-    for k in range(len(m)):
-        s += "|" + str(k) + "|"
-        for h in range(len(m)):
-            s += str(m[k][h]) + "|"
-        s+= "\n"
-
-    return s
-
-
 
 
 #vectorizations
@@ -168,8 +145,6 @@ class NeuralNetwork:
                 #recording loss
                 self._accurayIterations[iter] += np.sum(cross_entropy(z, y[k]))
 
-
-
             self._accurayIterations[iter] /= len(x)
 
         if figure:
@@ -213,8 +188,9 @@ class NeuralNetwork:
         data = {}
         for i in range(len(self._layers)):
             data[i] = {'type': self._layers[i]._layerType, 'shape': self._layers[i]._weights.shape, "weights": {}}
-            data[i]["weights"] = "w_name_" + str(i)
+            data[i]["weights"] = "name_" + str(i)
             np.save("w_name_" + str(i), self._layers[i]._weights)
+            np.save("b_name_" + str(i), self._layers[i]._biases)
 
         json_obj = json.dumps(data)
         with open(name + ".json", "w") as outfile:
@@ -231,7 +207,8 @@ class NeuralNetwork:
             output = layerData['shape'][0]
 
             newLayer = Layer(self, input, output, layerData['type'])
-            newLayer._weights = np.load(layerData["weights"] + ".npy") #reset weights
+            newLayer._weights = np.load("w_" + layerData["weights"] + ".npy") #reset weights
+            newLayer._biases = np.load("b_" + layerData["weights"] + ".npy") #reset weights
 
             sortedLayerList[int(layerNumber)] = newLayer
 
@@ -299,7 +276,7 @@ class Layer:
         self._weights = (-1 + 2 * np.random.random((outputs, inputs)))
 
         #biases
-        self._biases = np.ones(outputs)
+        self._biases = np.ones(outputs) * 0.1
 
         #errors
         self._deltas = np.ones(outputs)
@@ -315,6 +292,9 @@ class Layer:
 
         #linear combinations of input from previous layer
         self._a = np.matmul(self._weights, x)
+
+        #adding biases
+        self._a = np.add(self._a, self._biases)
 
         #activation function
         if self._layerType == "hidden":
@@ -347,6 +327,9 @@ class Layer:
 
         #final updates on weights
         self._weights = np.add(self._weights, updates)
+
+        #updating biases
+        self._biases = np.add(self._biases, - self._network._learning_rate * self._deltas)
 
 
 
@@ -403,11 +386,10 @@ if __name__ == "__main__":
     #The model is trained on data and labels from the loader
     #There is no batch training, and there are five epochs.
     #The last argument "True" indicates that a plot of the loss function is given at the end.
-    network.train(data, labels, 1)
+    network.train(data, labels, 50, True)
 
     #The model is saved in a file called "mini" (.json file)
-    network.saveModel("mini")
-
+    network.saveModel("mini_50")
 
     network.evaluate(data_test, labels_test, True)
 
@@ -421,7 +403,7 @@ if __name__ == "__main__":
     #------------------------------------
 
     network2 = NeuralNetwork()
-    network2.readModel("mini.json")
+    network2.readModel("mini_50.json")
 
     #Comparing outputs from two networks
     print("1",network.predict(flatten(convert2numpy("../../data/Reduced MNIST Data/Reduced Testing data/1/936.jpg"))/ 255.0)* 100)
